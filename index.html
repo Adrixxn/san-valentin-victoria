@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Para Victoria ♥</title>
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom, #ffffff, #fff0f5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.card {
+    background: white;
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 500px;
+}
+
+h1 {
+    color: #ff4d6d;
+}
+
+button {
+    margin: 20px;
+    padding: 12px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#yes {
+    background-color: #ff4d6d;
+    color: white;
+}
+
+#no {
+    background-color: #f2f2f2;
+}
+
+</style>
+</head>
+<body>
+
+<div class="card" id="main">
+    <h1>Victoria, ¿quieres ser mi San Valentín? ♥</h1>
+    <p>Prometo cuidarte y hacerte feliz ♥</p>
+    <button id="yes" onclick="yesPage()">Sí ♥</button>
+    <button id="no" onmouseover="moveNo()">No</button>
+</div>
+
+<script>
+function moveNo() {
+    const btn = document.getElementById("no");
+    btn.style.position = "absolute";
+    btn.style.left = Math.random() * (window.innerWidth - 100) + "px";
+    btn.style.top = Math.random() * (window.innerHeight - 50) + "px";
+}
+
+function yesPage() {
+    document.body.innerHTML = `
+    <div class="card">
+        <h1>Sabía que dirías que sí ♥</h1>
+        <p>Victoria, eres mi San Valentín ♥</p>
+    </div>
+    `;
+}
+</script>
+
+</body>
+</html>
