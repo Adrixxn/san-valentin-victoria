@@ -15,7 +15,6 @@
   --muted:#7a7a7a;
   --border:#ffd1dc;
 }
-
 *{box-sizing:border-box;}
 
 body{
@@ -40,26 +39,12 @@ body{
   padding:40px 30px;
   text-align:center;
   box-shadow:0 20px 45px rgba(0,0,0,.08);
+  z-index:5;
 }
 
-h1{
-  margin:0 0 15px;
-  font-size:24px;
-  color:var(--text);
-}
-
-.question{
-  font-size:26px;
-  font-weight:800;
-  color:var(--accent);
-  margin-bottom:12px;
-}
-
-.sub{
-  font-size:14px;
-  color:var(--muted);
-  margin-bottom:25px;
-}
+h1{margin:0 0 15px;font-size:24px;color:var(--text);}
+.question{font-size:26px;font-weight:800;color:var(--accent);margin-bottom:12px;line-height:1.15;}
+.sub{font-size:14px;color:var(--muted);margin-bottom:25px;}
 
 /* BOTONES */
 button{
@@ -74,46 +59,42 @@ button{
 #yesBtn{
   background:var(--accent);
   color:white;
+  margin-right:16px;
 }
-
 #yesBtn:hover{background:var(--accent2);}
 
-#noBtn{
-  position:absolute;
-  background:#f5f5f5;
-  color:var(--text);
+#btnRow{
+  position:relative;
+  display:inline-block;
+  height:52px;
 }
 
+/* El NO es "floating" por toda la pantalla cuando se mueve */
+#noBtn{
+  position:fixed;         /* clave: siempre relativo al viewport */
+  background:#f5f5f5;
+  color:var(--text);
+  z-index:9999;           /* nunca detrás */
+  left:0; top:0;
+}
+
+/* pantallas */
 .screen{display:none;}
 .screen.active{display:block;}
 
-.bigTitle{
-  font-size:28px;
-  font-weight:800;
-  margin-bottom:15px;
-  color:var(--text);
-}
-
-.bigAccent{
-  font-size:20px;
-  font-weight:800;
-  color:var(--accent);
-}
-
-.note{
-  font-size:13px;
-  color:var(--muted);
-  margin-top:10px;
-}
+.bigTitle{font-size:28px;font-weight:800;margin-bottom:15px;color:var(--text);}
+.bigAccent{font-size:20px;font-weight:800;color:var(--accent);}
+.note{font-size:13px;color:var(--muted);margin-top:10px;}
 
 /* CORAZONES */
 .heart{
-  position:absolute;
+  position:fixed;       /* relativo al viewport */
   color:white;
   font-weight:900;
   pointer-events:none;
   user-select:none;
   text-shadow:1px 1px 0 #ffd1dc;
+  z-index:1;
 }
 </style>
 </head>
@@ -125,16 +106,21 @@ button{
     <h1>Tengo una pregunta importante ♥</h1>
     <div class="question" id="questionText">Mi amor, ¿quieres ser mi San Valentín? ♥</div>
     <div class="sub" id="subText">Dime que si y te doy un beso ♥</div>
-    <button id="yesBtn">Sí ♥</button>
-    <button id="noBtn">No!</button>
+
+    <div id="btnRow">
+      <button id="yesBtn">Sí ♥</button>
+    </div>
   </div>
+
+  <!-- NO va fuera de la card para poder moverse libre sin clipping -->
+  <button id="noBtn">No!</button>
 </div>
 
 <div id="noScreen" class="screen">
   <div class="card">
     <div class="bigTitle">VERÁS QUE ME RESIENTO!!</div>
     <div class="sub">Piénsalo bien Victoria! ):(</div>
-    <button onclick="showMain()" style="background:var(--accent);color:white;">
+    <button id="backBtn" style="background:var(--accent);color:white;">
       Era bromimi, yo te amo y estoy obsesionada contigo ♥
     </button>
   </div>
@@ -145,118 +131,204 @@ button{
     <div class="bigTitle">Sabía que dirías que sí ♥</div>
     <div class="bigAccent">Mi amor, seamos pololos ♥</div>
     <div class="note">Te amo mas que nada en este mundo ♥</div>
-    <button onclick="showMain()" style="background:var(--accent);color:white;">Cerrar ♥</button>
+    <button id="closeBtn" style="background:var(--accent);color:white;">Cerrar ♥</button>
   </div>
 </div>
 
 <script>
-const MIN_DISTANCE = 90;
-const MARGIN = 10;
+/* ---------- Config “controlado” ---------- */
+const MIN_DISTANCE_FROM_YES = 95;     // no se acerca al Sí
+const EDGE_MARGIN = 12;              // no se pega a bordes
+const TRIGGER_DISTANCE = 130;        // a qué distancia huye
+const HEART_LIMIT = 65;
 
+/* ---------- Refs ---------- */
 const mainScreen = document.getElementById("mainScreen");
 const noScreen = document.getElementById("noScreen");
 const yesScreen = document.getElementById("yesScreen");
 
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
+const backBtn = document.getElementById("backBtn");
+const closeBtn = document.getElementById("closeBtn");
 
-yesBtn.onclick = () => {
-  mainScreen.classList.remove("active");
-  yesScreen.classList.add("active");
-};
+/* ---------- Navigation ---------- */
+yesBtn.onclick = () => { mainScreen.classList.remove("active"); yesScreen.classList.add("active"); };
+noBtn.onclick  = () => { mainScreen.classList.remove("active"); noScreen.classList.add("active"); };
+backBtn.onclick = () => { noScreen.classList.remove("active"); mainScreen.classList.add("active"); resetNoToStart(); };
+closeBtn.onclick = () => { yesScreen.classList.remove("active"); mainScreen.classList.add("active"); resetNoToStart(); };
 
-noBtn.onclick = () => {
-  mainScreen.classList.remove("active");
-  noScreen.classList.add("active");
-};
+/* ---------- Helpers ---------- */
+function rect(el){ return el.getBoundingClientRect(); }
+function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
 
-function showMain(){
-  noScreen.classList.remove("active");
-  yesScreen.classList.remove("active");
-  mainScreen.classList.add("active");
-  placeNoSafely();
+function distanceCenters(r1, r2){
+  const c1x = r1.left + r1.width/2, c1y = r1.top + r1.height/2;
+  const c2x = r2.left + r2.width/2, c2y = r2.top + r2.height/2;
+  return Math.hypot(c1x-c2x, c1y-c2y);
 }
 
-/* CORAZONES */
-let hearts = [];
-function spawnHeart(){
-  const heart = document.createElement("div");
-  heart.className = "heart";
-  heart.innerText = "♥";
-  heart.style.fontSize = Math.random()*10 + 14 + "px";
-  heart.style.left = Math.random()*window.innerWidth + "px";
-  heart.style.top = window.innerHeight + "px";
-  document.body.appendChild(heart);
-  hearts.push({el:heart, speed:Math.random()*2+1});
-}
-setInterval(spawnHeart,200);
+function isCandidateValid(x, y, w, h){
+  // dentro del viewport
+  if (x < EDGE_MARGIN || y < EDGE_MARGIN) return false;
+  if (x + w > window.innerWidth - EDGE_MARGIN) return false;
+  if (y + h > window.innerHeight - EDGE_MARGIN) return false;
 
-function animateHearts(){
-  hearts.forEach(h=>{
-    let top = parseFloat(h.el.style.top);
-    h.el.style.top = top - h.speed + "px";
-    if(top < -30) h.el.remove();
-  });
-  hearts = hearts.filter(h=>h.el.isConnected);
-  requestAnimationFrame(animateHearts);
-}
-animateHearts();
-
-/* NO BUTTON MOVEMENT */
-function rect(el){
-  return el.getBoundingClientRect();
+  // lejos del YES
+  const yesR = rect(yesBtn);
+  const cand = { left:x, top:y, width:w, height:h };
+  const d = distanceCenters(yesR, cand);
+  return d >= MIN_DISTANCE_FROM_YES;
 }
 
-function placeNoSafely(){
-  const yesRect = rect(yesBtn);
-  const cardRect = rect(document.getElementById("mainCard"));
-  const noRect = rect(noBtn);
+/* ---------- Colocación inicial al lado del Sí (sin moverse al cargar) ---------- */
+function resetNoToStart(){
+  // Solo si estamos en main
+  if (!mainScreen.classList.contains("active")) return;
 
-  const width = noRect.width;
-  const height = noRect.height;
+  const y = rect(yesBtn);
+  const w = noBtn.offsetWidth || 80;
+  const h = noBtn.offsetHeight || 44;
 
-  let attempts = 0;
+  // lo ponemos a la derecha del Sí, con margen
+  let x = y.right + 16;
+  let yy = y.top;
 
-  while(attempts < 200){
-    let x = Math.random()*(window.innerWidth-width-MARGIN*2)+MARGIN;
-    let y = Math.random()*(window.innerHeight-height-MARGIN*2)+MARGIN;
-
-    let candidate = {
-      left:x,
-      top:y,
-      right:x+width,
-      bottom:y+height
-    };
-
-    let dist = Math.hypot(
-      (yesRect.left+yesRect.width/2)-(x+width/2),
-      (yesRect.top+yesRect.height/2)-(y+height/2)
-    );
-
-    if(dist > MIN_DISTANCE){
-      noBtn.style.left = x+"px";
-      noBtn.style.top = y+"px";
-      return;
-    }
-
-    attempts++;
+  // si se sale, lo ponemos a la izquierda del Sí
+  if (x + w > window.innerWidth - EDGE_MARGIN){
+    x = y.left - w - 16;
   }
+
+  // clamp final por seguridad
+  x = clamp(x, EDGE_MARGIN, window.innerWidth - EDGE_MARGIN - w);
+  yy = clamp(yy, EDGE_MARGIN, window.innerHeight - EDGE_MARGIN - h);
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top  = yy + "px";
 }
 
-window.addEventListener("mousemove", e=>{
-  if(!mainScreen.classList.contains("active")) return;
-  const r = rect(noBtn);
-  const centerX = r.left + r.width/2;
-  const centerY = r.top + r.height/2;
-  const distance = Math.hypot(e.clientX-centerX,e.clientY-centerY);
+/* ---------- Movimiento controlado ---------- */
+function moveNoControlled(){
+  if (!mainScreen.classList.contains("active")) return;
 
-  if(distance < 110){
-    placeNoSafely();
+  const w = noBtn.offsetWidth;
+  const h = noBtn.offsetHeight;
+
+  // idea: generar posiciones “más humanas” alrededor del mouse,
+  // pero siempre válidas y dentro de viewport.
+  const yesR = rect(yesBtn);
+
+  for (let i=0; i<60; i++){
+    // dirección aleatoria y distancia moderada
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 180 + Math.random() * 220; // control: no teletransporta a cualquier esquina siempre
+    let x = lastMouseX + Math.cos(angle) * radius - w/2;
+    let y = lastMouseY + Math.sin(angle) * radius - h/2;
+
+    // clamp a viewport
+    x = clamp(x, EDGE_MARGIN, window.innerWidth - EDGE_MARGIN - w);
+    y = clamp(y, EDGE_MARGIN, window.innerHeight - EDGE_MARGIN - h);
+
+    if (!isCandidateValid(x, y, w, h)) continue;
+
+    // extra: evita quedar encima de la card (opcional visual)
+    // NO la bloquea, pero mejora que no “se pierda”
+    const cardR = rect(document.getElementById("mainCard"));
+    const candR = { left:x, top:y, right:x+w, bottom:y+h };
+    const overlapsCard = !(candR.right <= cardR.left || candR.left >= cardR.right || candR.bottom <= cardR.top || candR.top >= cardR.bottom);
+    if (overlapsCard) continue;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+
+    if (Math.random() < 0.45) spawnHeart();
+    return;
+  }
+
+  // fallback: si no encuentra, lo manda a una esquina segura lejos del Sí
+  const corners = [
+    {x:EDGE_MARGIN, y:EDGE_MARGIN},
+    {x:window.innerWidth-EDGE_MARGIN-w, y:EDGE_MARGIN},
+    {x:EDGE_MARGIN, y:window.innerHeight-EDGE_MARGIN-h},
+    {x:window.innerWidth-EDGE_MARGIN-w, y:window.innerHeight-EDGE_MARGIN-h},
+  ];
+  let best = corners[0], bestD = -1;
+  for (const c of corners){
+    const cand = { left:c.x, top:c.y, width:w, height:h };
+    const d = distanceCenters(yesR, cand);
+    if (d > bestD){ bestD = d; best = c; }
+  }
+  noBtn.style.left = best.x + "px";
+  noBtn.style.top  = best.y + "px";
+}
+
+/* ---------- Mouse tracking ---------- */
+let lastMouseX = window.innerWidth/2;
+let lastMouseY = window.innerHeight/2;
+
+window.addEventListener("mousemove", (e)=>{
+  lastMouseX = e.clientX;
+  lastMouseY = e.clientY;
+
+  if (!mainScreen.classList.contains("active")) return;
+
+  const nr = rect(noBtn);
+  const cx = nr.left + nr.width/2;
+  const cy = nr.top + nr.height/2;
+  const d = Math.hypot(e.clientX-cx, e.clientY-cy);
+
+  if (d < TRIGGER_DISTANCE){
+    moveNoControlled();
   }
 });
 
-window.addEventListener("resize", placeNoSafely);
-placeNoSafely();
+/* Rescate: doble click en el fondo trae NO a su lugar inicial */
+window.addEventListener("dblclick", ()=>{
+  if (mainScreen.classList.contains("active")) resetNoToStart();
+});
+
+window.addEventListener("resize", ()=>{
+  if (mainScreen.classList.contains("active")) resetNoToStart();
+});
+
+/* ---------- Hearts ---------- */
+let hearts = [];
+function spawnHeart(){
+  if (hearts.length >= HEART_LIMIT) return;
+
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerText = "♥";
+  heart.style.fontSize = (Math.random()*10 + 14) + "px";
+  heart.style.left = (Math.random()*window.innerWidth) + "px";
+  heart.style.top  = (window.innerHeight + 10) + "px";
+  document.body.appendChild(heart);
+
+  hearts.push({el:heart, speed:(Math.random()*1.8 + 1.0), drift:(Math.random()*1.2 - 0.6)});
+}
+
+setInterval(spawnHeart, 230);
+
+function animateHearts(){
+  const alive = [];
+  for (const h of hearts){
+    const top = parseFloat(h.el.style.top);
+    const left = parseFloat(h.el.style.left);
+    h.el.style.top  = (top - h.speed) + "px";
+    h.el.style.left = (left + h.drift) + "px";
+    if (top > -40) alive.push(h);
+    else h.el.remove();
+  }
+  hearts = alive;
+  requestAnimationFrame(animateHearts);
+}
+requestAnimationFrame(animateHearts);
+
+/* Inicial: deja NO al lado del Sí (no random al cargar) */
+window.addEventListener("load", ()=>{
+  // fuerza tamaños correctos
+  setTimeout(resetNoToStart, 50);
+});
 </script>
 
 </body>
