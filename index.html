@@ -1,341 +1,263 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Para Victoria ♥</title>
-  <style>
-    :root{
-      --bgTop:#ffffff;
-      --bgBottom:#fff0f5;
-      --accent:#ff4d6d;
-      --accent2:#ff8fab;
-      --text:#2b2b2b;
-      --muted:#7a7a7a;
-      --border:#ffd1dc;
-    }
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
-      height:100vh;
-      overflow:hidden;
-      background: linear-gradient(to bottom, var(--bgTop), var(--bgBottom));
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Para Victoria ♥</title>
 
-    /* corazones */
-    .heart{
-      position: absolute;
-      user-select:none;
-      pointer-events:none;
-      font-weight: 700;
-      opacity: .95;
-      text-shadow: 1px 1px 0 var(--border);
-      color: #ffffff; /* corazones blancos */
-      will-change: transform, top, left, opacity;
-    }
+<style>
+:root{
+  --bgTop:#ffffff;
+  --bgBottom:#fff0f5;
+  --accent:#ff4d6d;
+  --accent2:#ff8fab;
+  --text:#2b2b2b;
+  --muted:#7a7a7a;
+  --border:#ffd1dc;
+}
 
-    /* card */
-    .card{
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform: translate(-50%,-50%);
-      width: 560px;
-      max-width: calc(100vw - 40px);
-      background:#fff;
-      border:2px solid var(--border);
-      border-radius:18px;
-      padding:42px 34px;
-      text-align:center;
-      box-shadow: 0 18px 45px rgba(0,0,0,.10);
-    }
-    h1{
-      margin:0 0 18px;
-      font-size:24px;
-      color:var(--text);
-      font-weight:700;
-    }
-    .question{
-      margin:0 0 12px;
-      font-size:26px;
-      color:var(--accent);
-      font-weight:800;
-      line-height:1.15;
-    }
-    .sub{
-      margin:0 0 26px;
-      color:var(--muted);
-      font-size:14px;
-    }
+*{box-sizing:border-box;}
 
-    /* botones */
-    .btnRow{
-      display:flex;
-      justify-content:center;
-      gap:18px;
-      margin-top:8px;
-      position:relative;
-      z-index:2;
-    }
-    button{
-      border:0;
-      border-radius:12px;
-      padding:12px 22px;
-      font-size:16px;
-      cursor:pointer;
-      font-weight:700;
-    }
-    #yesBtn{
-      background: var(--accent);
-      color:#fff;
-    }
-    #yesBtn:hover{ background: var(--accent2); }
+body{
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  font-family:"Segoe UI", Arial, sans-serif;
+  background: linear-gradient(to bottom,var(--bgTop),var(--bgBottom));
+}
 
-    #noBtn{
-      background:#f5f5f5;
-      color:var(--text);
-      position:absolute; /* para poder moverlo libre */
-      left: 50%;
-      top: 0;
-      transform: translateX(90px); /* posición inicial a la derecha del Sí */
-    }
+/* CARD */
+.card{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:560px;
+  max-width:calc(100vw - 40px);
+  background:white;
+  border:2px solid var(--border);
+  border-radius:18px;
+  padding:40px 30px;
+  text-align:center;
+  box-shadow:0 20px 45px rgba(0,0,0,.08);
+}
 
-    /* pantallas */
-    .screen{ display:none; }
-    .screen.active{ display:block; }
+h1{
+  margin:0 0 15px;
+  font-size:24px;
+  color:var(--text);
+}
 
-    .bigTitle{
-      font-size:28px;
-      color:var(--text);
-      font-weight:800;
-      margin-bottom:14px;
-    }
-    .bigAccent{
-      color:var(--accent);
-      font-size:20px;
-      font-weight:800;
-      margin: 0 0 14px;
-    }
-    .note{
-      color:var(--muted);
-      font-size:13px;
-      margin-top:8px;
-    }
-    .centerBtn{
-      margin-top:22px;
-      background: var(--accent);
-      color:#fff;
-    }
-    .centerBtn:hover{ background: var(--accent2); }
+.question{
+  font-size:26px;
+  font-weight:800;
+  color:var(--accent);
+  margin-bottom:12px;
+}
 
-    @media (max-width:520px){
-      .question{ font-size:22px; }
-      h1{ font-size:20px; }
-    }
-  </style>
+.sub{
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:25px;
+}
+
+/* BOTONES */
+button{
+  border:none;
+  border-radius:12px;
+  padding:12px 22px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+#yesBtn{
+  background:var(--accent);
+  color:white;
+}
+
+#yesBtn:hover{background:var(--accent2);}
+
+#noBtn{
+  position:absolute;
+  background:#f5f5f5;
+  color:var(--text);
+}
+
+.screen{display:none;}
+.screen.active{display:block;}
+
+.bigTitle{
+  font-size:28px;
+  font-weight:800;
+  margin-bottom:15px;
+  color:var(--text);
+}
+
+.bigAccent{
+  font-size:20px;
+  font-weight:800;
+  color:var(--accent);
+}
+
+.note{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:10px;
+}
+
+/* CORAZONES */
+.heart{
+  position:absolute;
+  color:white;
+  font-weight:900;
+  pointer-events:none;
+  user-select:none;
+  text-shadow:1px 1px 0 #ffd1dc;
+}
+</style>
 </head>
+
 <body>
 
-  <!-- MAIN -->
-  <div id="mainScreen" class="screen active">
-    <div class="card" id="mainCard">
-      <h1>Tengo una pregunta importante ♥</h1>
-      <div class="question" id="qText">Mi amor, ¿quieres ser mi San Valentín? ♥</div>
-      <div class="sub" id="subText">Dime que si y te doy un beso ♥</div>
-
-      <div class="btnRow" id="btnRow">
-        <button id="yesBtn">Sí ♥</button>
-        <button id="noBtn">No!</button>
-      </div>
-    </div>
+<div id="mainScreen" class="screen active">
+  <div class="card" id="mainCard">
+    <h1>Tengo una pregunta importante ♥</h1>
+    <div class="question" id="questionText">Mi amor, ¿quieres ser mi San Valentín? ♥</div>
+    <div class="sub" id="subText">Dime que si y te doy un beso ♥</div>
+    <button id="yesBtn">Sí ♥</button>
+    <button id="noBtn">No!</button>
   </div>
+</div>
 
-  <!-- NO SCREEN -->
-  <div id="noScreen" class="screen">
-    <div class="card">
-      <div class="bigTitle" id="noTitle">VERÁS QUE ME RESIENTO!!</div>
-      <div class="sub" id="noSub">Piénsalo bien Victoria! ):(</div>
-      <button class="centerBtn" id="backBtn">Era bromimi, yo te amo y estoy obesionada contigo ♥</button>
-    </div>
+<div id="noScreen" class="screen">
+  <div class="card">
+    <div class="bigTitle">VERÁS QUE ME RESIENTO!!</div>
+    <div class="sub">Piénsalo bien Victoria! ):(</div>
+    <button onclick="showMain()" style="background:var(--accent);color:white;">
+      Era bromimi, yo te amo y estoy obsesionada contigo ♥
+    </button>
   </div>
+</div>
 
-  <!-- YES SCREEN -->
-  <div id="yesScreen" class="screen">
-    <div class="card">
-      <div class="bigTitle" id="yesTitle">Sabía que dirías que sí ♥</div>
-      <div class="bigAccent" id="yesMsg">Mi amor, seamos pololos ♥</div>
-      <div class="note" id="yesNote">Te amo mas que nada en este mundo ♥</div>
-      <button class="centerBtn" id="closeBtn">Cerrar ♥</button>
-    </div>
+<div id="yesScreen" class="screen">
+  <div class="card">
+    <div class="bigTitle">Sabía que dirías que sí ♥</div>
+    <div class="bigAccent">Mi amor, seamos pololos ♥</div>
+    <div class="note">Te amo mas que nada en este mundo ♥</div>
+    <button onclick="showMain()" style="background:var(--accent);color:white;">Cerrar ♥</button>
   </div>
+</div>
 
 <script>
-  // ============================================================
-  // ✅ ZONA EDITABLE (textos)
-  // ============================================================
-  const NOMBRE = "Mi amor";
+const MIN_DISTANCE = 90;
+const MARGIN = 10;
 
-  const TEXT = {
-    pregunta: `${NOMBRE}, ¿quieres ser mi San Valentín? ♥`,
-    subtexto: "Dime que si y te doy un beso ♥",
-    noTitle: "VERÁS QUE ME RESIENTO!!",
-    noSub: "Piénsalo bien Victoria! ):( ",
-    backBtn: "Era bromimi, yo te amo y estoy obesionada contigo ♥",
-    yesTitle: "Sabía que dirías que sí ♥",
-    yesMsg: `${NOMBRE}, seamos pololos ♥`,
-    yesNote: "Te amo mas que nada en este mundo ♥"
-  };
+const mainScreen = document.getElementById("mainScreen");
+const noScreen = document.getElementById("noScreen");
+const yesScreen = document.getElementById("yesScreen");
 
-  // ============================================================
-  // ⚠️ NO TOCAR (lógica)
-  // ============================================================
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
 
-  const MIN_SEPARACION = 85;   // distancia mínima alrededor del botón Sí
-  const SCREEN_MARGIN = 12;    // margen pantalla
-  const HEART_SPAWN_MS = 220;  // frecuencia corazones
-  const HEART_LIMIT = 70;
+yesBtn.onclick = () => {
+  mainScreen.classList.remove("active");
+  yesScreen.classList.add("active");
+};
 
-  const mainScreen = document.getElementById("mainScreen");
-  const noScreen   = document.getElementById("noScreen");
-  const yesScreen  = document.getElementById("yesScreen");
+noBtn.onclick = () => {
+  mainScreen.classList.remove("active");
+  noScreen.classList.add("active");
+};
 
-  const qText   = document.getElementById("qText");
-  const subText = document.getElementById("subText");
-  const noTitle = document.getElementById("noTitle");
-  const noSub   = document.getElementById("noSub");
-  const yesTitle= document.getElementById("yesTitle");
-  const yesMsg  = document.getElementById("yesMsg");
-  const yesNote = document.getElementById("yesNote");
+function showMain(){
+  noScreen.classList.remove("active");
+  yesScreen.classList.remove("active");
+  mainScreen.classList.add("active");
+  placeNoSafely();
+}
 
-  const yesBtn = document.getElementById("yesBtn");
-  const noBtn  = document.getElementById("noBtn");
-  const backBtn= document.getElementById("backBtn");
-  const closeBtn=document.getElementById("closeBtn");
+/* CORAZONES */
+let hearts = [];
+function spawnHeart(){
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerText = "♥";
+  heart.style.fontSize = Math.random()*10 + 14 + "px";
+  heart.style.left = Math.random()*window.innerWidth + "px";
+  heart.style.top = window.innerHeight + "px";
+  document.body.appendChild(heart);
+  hearts.push({el:heart, speed:Math.random()*2+1});
+}
+setInterval(spawnHeart,200);
 
-  // aplica textos
-  qText.textContent = TEXT.pregunta;
-  subText.textContent = TEXT.subtexto;
-  noTitle.textContent = TEXT.noTitle;
-  noSub.textContent = TEXT.noSub;
-  backBtn.textContent = TEXT.backBtn;
-  yesTitle.textContent = TEXT.yesTitle;
-  yesMsg.textContent = TEXT.yesMsg;
-  yesNote.textContent = TEXT.yesNote;
+function animateHearts(){
+  hearts.forEach(h=>{
+    let top = parseFloat(h.el.style.top);
+    h.el.style.top = top - h.speed + "px";
+    if(top < -30) h.el.remove();
+  });
+  hearts = hearts.filter(h=>h.el.isConnected);
+  requestAnimationFrame(animateHearts);
+}
+animateHearts();
 
-  function show(screen){
-    [mainScreen, noScreen, yesScreen].forEach(s => s.classList.remove("active"));
-    screen.classList.add("active");
-  }
+/* NO BUTTON MOVEMENT */
+function rect(el){
+  return el.getBoundingClientRect();
+}
 
-  yesBtn.addEventListener("click", () => show(yesScreen));
-  noBtn.addEventListener("click",  () => show(noScreen));
-  backBtn.addEventListener("click",() => show(mainScreen));
-  closeBtn.addEventListener("click",() => window.close()); // si el navegador no deja, igual queda ahí
+function placeNoSafely(){
+  const yesRect = rect(yesBtn);
+  const cardRect = rect(document.getElementById("mainCard"));
+  const noRect = rect(noBtn);
 
-  // ---------------- Hearts (blancos con glow rosado) ----------------
-  let hearts = [];
-  function spawnHeart(){
-    if (hearts.length >= HEART_LIMIT) return;
+  const width = noRect.width;
+  const height = noRect.height;
 
-    const el = document.createElement("div");
-    el.className = "heart";
-    el.textContent = "♥";
-    const size = rand(14, 24);
-    el.style.fontSize = size + "px";
+  let attempts = 0;
 
-    const x = rand(20, window.innerWidth - 20);
-    const y = window.innerHeight + rand(10, 70);
-    el.style.left = x + "px";
-    el.style.top  = y + "px";
+  while(attempts < 200){
+    let x = Math.random()*(window.innerWidth-width-MARGIN*2)+MARGIN;
+    let y = Math.random()*(window.innerHeight-height-MARGIN*2)+MARGIN;
 
-    const speed = randFloat(0.8, 2.0);
-    const drift = randFloat(-0.6, 0.6);
+    let candidate = {
+      left:x,
+      top:y,
+      right:x+width,
+      bottom:y+height
+    };
 
-    document.body.appendChild(el);
-    hearts.push({el, x, y, speed, drift});
-  }
+    let dist = Math.hypot(
+      (yesRect.left+yesRect.width/2)-(x+width/2),
+      (yesRect.top+yesRect.height/2)-(y+height/2)
+    );
 
-  function tickHearts(){
-    const alive = [];
-    for (const h of hearts){
-      h.y -= h.speed;
-      h.x += h.drift;
-      h.el.style.top  = h.y + "px";
-      h.el.style.left = h.x + "px";
-      if (h.y > -40) alive.push(h);
-      else h.el.remove();
-    }
-    hearts = alive;
-    requestAnimationFrame(tickHearts);
-  }
-
-  setInterval(spawnHeart, HEART_SPAWN_MS);
-  requestAnimationFrame(tickHearts);
-
-  // ---------------- NO huye por toda la ventana (evita Sí) ----------------
-  function rect(el){
-    const r = el.getBoundingClientRect();
-    return {x1:r.left, y1:r.top, x2:r.right, y2:r.bottom, w:r.width, h:r.height};
-  }
-
-  function intersects(a,b){
-    return !(a.x2 <= b.x1 || a.x1 >= b.x2 || a.y2 <= b.y1 || a.y1 >= b.y2);
-  }
-
-  function inflate(r, pad){
-    return {x1:r.x1-pad, y1:r.y1-pad, x2:r.x2+pad, y2:r.y2+pad};
-  }
-
-  function moveNo(){
-    // solo en pantalla principal
-    if (!mainScreen.classList.contains("active")) return;
-
-    const yesR = rect(yesBtn);
-    const forbid = inflate(yesR, MIN_SEPARACION);
-
-    // tamaño del no
-    const noR = rect(noBtn);
-    const bw = noR.w, bh = noR.h;
-
-    const minX = SCREEN_MARGIN;
-    const minY = SCREEN_MARGIN;
-    const maxX = window.innerWidth  - SCREEN_MARGIN - bw;
-    const maxY = window.innerHeight - SCREEN_MARGIN - bh;
-
-    for (let i=0;i<140;i++){
-      const nx = rand(minX, maxX);
-      const ny = rand(minY, maxY);
-      const candidate = {x1:nx, y1:ny, x2:nx+bw, y2:ny+bh};
-
-      if (intersects(candidate, forbid)) continue;
-
-      noBtn.style.left = nx + "px";
-      noBtn.style.top  = ny + "px";
-      noBtn.style.transform = "none"; // ya lo posicionamos directo
-      if (Math.random() < 0.55) spawnHeart();
+    if(dist > MIN_DISTANCE){
+      noBtn.style.left = x+"px";
+      noBtn.style.top = y+"px";
       return;
     }
+
+    attempts++;
   }
+}
 
-  function onMouseMove(e){
-    if (!mainScreen.classList.contains("active")) return;
-    const r = rect(noBtn);
-    const cx = (r.x1 + r.x2)/2;
-    const cy = (r.y1 + r.y2)/2;
-    const d = Math.hypot(e.clientX - cx, e.clientY - cy);
-    if (d < 120) moveNo(); // sensibilidad
+window.addEventListener("mousemove", e=>{
+  if(!mainScreen.classList.contains("active")) return;
+  const r = rect(noBtn);
+  const centerX = r.left + r.width/2;
+  const centerY = r.top + r.height/2;
+  const distance = Math.hypot(e.clientX-centerX,e.clientY-centerY);
+
+  if(distance < 110){
+    placeNoSafely();
   }
+});
 
-  window.addEventListener("mousemove", onMouseMove);
-  window.addEventListener("resize", () => {
-    // si se redimensiona, lo recolocamos para evitar quedar fuera
-    moveNo();
-  });
-
-  // ---------------- helpers ----------------
-  function rand(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
-  function randFloat(min, max){ return Math.random()*(max-min)+min; }
+window.addEventListener("resize", placeNoSafely);
+placeNoSafely();
 </script>
+
 </body>
 </html>
