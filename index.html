@@ -1,78 +1,341 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Para Victoria ♥</title>
-<style>
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(to bottom, #ffffff, #fff0f5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Para Victoria ♥</title>
+  <style>
+    :root{
+      --bgTop:#ffffff;
+      --bgBottom:#fff0f5;
+      --accent:#ff4d6d;
+      --accent2:#ff8fab;
+      --text:#2b2b2b;
+      --muted:#7a7a7a;
+      --border:#ffd1dc;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      height:100vh;
+      overflow:hidden;
+      background: linear-gradient(to bottom, var(--bgTop), var(--bgBottom));
+    }
 
-.card {
-    background: white;
-    padding: 50px;
-    border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-    text-align: center;
-    width: 500px;
-}
+    /* corazones */
+    .heart{
+      position: absolute;
+      user-select:none;
+      pointer-events:none;
+      font-weight: 700;
+      opacity: .95;
+      text-shadow: 1px 1px 0 var(--border);
+      color: #ffffff; /* corazones blancos */
+      will-change: transform, top, left, opacity;
+    }
 
-h1 {
-    color: #ff4d6d;
-}
+    /* card */
+    .card{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform: translate(-50%,-50%);
+      width: 560px;
+      max-width: calc(100vw - 40px);
+      background:#fff;
+      border:2px solid var(--border);
+      border-radius:18px;
+      padding:42px 34px;
+      text-align:center;
+      box-shadow: 0 18px 45px rgba(0,0,0,.10);
+    }
+    h1{
+      margin:0 0 18px;
+      font-size:24px;
+      color:var(--text);
+      font-weight:700;
+    }
+    .question{
+      margin:0 0 12px;
+      font-size:26px;
+      color:var(--accent);
+      font-weight:800;
+      line-height:1.15;
+    }
+    .sub{
+      margin:0 0 26px;
+      color:var(--muted);
+      font-size:14px;
+    }
 
-button {
-    margin: 20px;
-    padding: 12px 30px;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
+    /* botones */
+    .btnRow{
+      display:flex;
+      justify-content:center;
+      gap:18px;
+      margin-top:8px;
+      position:relative;
+      z-index:2;
+    }
+    button{
+      border:0;
+      border-radius:12px;
+      padding:12px 22px;
+      font-size:16px;
+      cursor:pointer;
+      font-weight:700;
+    }
+    #yesBtn{
+      background: var(--accent);
+      color:#fff;
+    }
+    #yesBtn:hover{ background: var(--accent2); }
 
-#yes {
-    background-color: #ff4d6d;
-    color: white;
-}
+    #noBtn{
+      background:#f5f5f5;
+      color:var(--text);
+      position:absolute; /* para poder moverlo libre */
+      left: 50%;
+      top: 0;
+      transform: translateX(90px); /* posición inicial a la derecha del Sí */
+    }
 
-#no {
-    background-color: #f2f2f2;
-}
+    /* pantallas */
+    .screen{ display:none; }
+    .screen.active{ display:block; }
 
-</style>
+    .bigTitle{
+      font-size:28px;
+      color:var(--text);
+      font-weight:800;
+      margin-bottom:14px;
+    }
+    .bigAccent{
+      color:var(--accent);
+      font-size:20px;
+      font-weight:800;
+      margin: 0 0 14px;
+    }
+    .note{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:8px;
+    }
+    .centerBtn{
+      margin-top:22px;
+      background: var(--accent);
+      color:#fff;
+    }
+    .centerBtn:hover{ background: var(--accent2); }
+
+    @media (max-width:520px){
+      .question{ font-size:22px; }
+      h1{ font-size:20px; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="card" id="main">
-    <h1>Victoria, ¿quieres ser mi San Valentín? ♥</h1>
-    <p>Prometo cuidarte y hacerte feliz ♥</p>
-    <button id="yes" onclick="yesPage()">Sí ♥</button>
-    <button id="no" onmouseover="moveNo()">No</button>
-</div>
+  <!-- MAIN -->
+  <div id="mainScreen" class="screen active">
+    <div class="card" id="mainCard">
+      <h1>Tengo una pregunta importante ♥</h1>
+      <div class="question" id="qText">Mi amor, ¿quieres ser mi San Valentín? ♥</div>
+      <div class="sub" id="subText">Dime que si y te doy un beso ♥</div>
+
+      <div class="btnRow" id="btnRow">
+        <button id="yesBtn">Sí ♥</button>
+        <button id="noBtn">No!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NO SCREEN -->
+  <div id="noScreen" class="screen">
+    <div class="card">
+      <div class="bigTitle" id="noTitle">VERÁS QUE ME RESIENTO!!</div>
+      <div class="sub" id="noSub">Piénsalo bien Victoria! ):(</div>
+      <button class="centerBtn" id="backBtn">Era bromimi, yo te amo y estoy obesionada contigo ♥</button>
+    </div>
+  </div>
+
+  <!-- YES SCREEN -->
+  <div id="yesScreen" class="screen">
+    <div class="card">
+      <div class="bigTitle" id="yesTitle">Sabía que dirías que sí ♥</div>
+      <div class="bigAccent" id="yesMsg">Mi amor, seamos pololos ♥</div>
+      <div class="note" id="yesNote">Te amo mas que nada en este mundo ♥</div>
+      <button class="centerBtn" id="closeBtn">Cerrar ♥</button>
+    </div>
+  </div>
 
 <script>
-function moveNo() {
-    const btn = document.getElementById("no");
-    btn.style.position = "absolute";
-    btn.style.left = Math.random() * (window.innerWidth - 100) + "px";
-    btn.style.top = Math.random() * (window.innerHeight - 50) + "px";
-}
+  // ============================================================
+  // ✅ ZONA EDITABLE (textos)
+  // ============================================================
+  const NOMBRE = "Mi amor";
 
-function yesPage() {
-    document.body.innerHTML = `
-    <div class="card">
-        <h1>Sabía que dirías que sí ♥</h1>
-        <p>Victoria, eres mi San Valentín ♥</p>
-    </div>
-    `;
-}
+  const TEXT = {
+    pregunta: `${NOMBRE}, ¿quieres ser mi San Valentín? ♥`,
+    subtexto: "Dime que si y te doy un beso ♥",
+    noTitle: "VERÁS QUE ME RESIENTO!!",
+    noSub: "Piénsalo bien Victoria! ):( ",
+    backBtn: "Era bromimi, yo te amo y estoy obesionada contigo ♥",
+    yesTitle: "Sabía que dirías que sí ♥",
+    yesMsg: `${NOMBRE}, seamos pololos ♥`,
+    yesNote: "Te amo mas que nada en este mundo ♥"
+  };
+
+  // ============================================================
+  // ⚠️ NO TOCAR (lógica)
+  // ============================================================
+
+  const MIN_SEPARACION = 85;   // distancia mínima alrededor del botón Sí
+  const SCREEN_MARGIN = 12;    // margen pantalla
+  const HEART_SPAWN_MS = 220;  // frecuencia corazones
+  const HEART_LIMIT = 70;
+
+  const mainScreen = document.getElementById("mainScreen");
+  const noScreen   = document.getElementById("noScreen");
+  const yesScreen  = document.getElementById("yesScreen");
+
+  const qText   = document.getElementById("qText");
+  const subText = document.getElementById("subText");
+  const noTitle = document.getElementById("noTitle");
+  const noSub   = document.getElementById("noSub");
+  const yesTitle= document.getElementById("yesTitle");
+  const yesMsg  = document.getElementById("yesMsg");
+  const yesNote = document.getElementById("yesNote");
+
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn  = document.getElementById("noBtn");
+  const backBtn= document.getElementById("backBtn");
+  const closeBtn=document.getElementById("closeBtn");
+
+  // aplica textos
+  qText.textContent = TEXT.pregunta;
+  subText.textContent = TEXT.subtexto;
+  noTitle.textContent = TEXT.noTitle;
+  noSub.textContent = TEXT.noSub;
+  backBtn.textContent = TEXT.backBtn;
+  yesTitle.textContent = TEXT.yesTitle;
+  yesMsg.textContent = TEXT.yesMsg;
+  yesNote.textContent = TEXT.yesNote;
+
+  function show(screen){
+    [mainScreen, noScreen, yesScreen].forEach(s => s.classList.remove("active"));
+    screen.classList.add("active");
+  }
+
+  yesBtn.addEventListener("click", () => show(yesScreen));
+  noBtn.addEventListener("click",  () => show(noScreen));
+  backBtn.addEventListener("click",() => show(mainScreen));
+  closeBtn.addEventListener("click",() => window.close()); // si el navegador no deja, igual queda ahí
+
+  // ---------------- Hearts (blancos con glow rosado) ----------------
+  let hearts = [];
+  function spawnHeart(){
+    if (hearts.length >= HEART_LIMIT) return;
+
+    const el = document.createElement("div");
+    el.className = "heart";
+    el.textContent = "♥";
+    const size = rand(14, 24);
+    el.style.fontSize = size + "px";
+
+    const x = rand(20, window.innerWidth - 20);
+    const y = window.innerHeight + rand(10, 70);
+    el.style.left = x + "px";
+    el.style.top  = y + "px";
+
+    const speed = randFloat(0.8, 2.0);
+    const drift = randFloat(-0.6, 0.6);
+
+    document.body.appendChild(el);
+    hearts.push({el, x, y, speed, drift});
+  }
+
+  function tickHearts(){
+    const alive = [];
+    for (const h of hearts){
+      h.y -= h.speed;
+      h.x += h.drift;
+      h.el.style.top  = h.y + "px";
+      h.el.style.left = h.x + "px";
+      if (h.y > -40) alive.push(h);
+      else h.el.remove();
+    }
+    hearts = alive;
+    requestAnimationFrame(tickHearts);
+  }
+
+  setInterval(spawnHeart, HEART_SPAWN_MS);
+  requestAnimationFrame(tickHearts);
+
+  // ---------------- NO huye por toda la ventana (evita Sí) ----------------
+  function rect(el){
+    const r = el.getBoundingClientRect();
+    return {x1:r.left, y1:r.top, x2:r.right, y2:r.bottom, w:r.width, h:r.height};
+  }
+
+  function intersects(a,b){
+    return !(a.x2 <= b.x1 || a.x1 >= b.x2 || a.y2 <= b.y1 || a.y1 >= b.y2);
+  }
+
+  function inflate(r, pad){
+    return {x1:r.x1-pad, y1:r.y1-pad, x2:r.x2+pad, y2:r.y2+pad};
+  }
+
+  function moveNo(){
+    // solo en pantalla principal
+    if (!mainScreen.classList.contains("active")) return;
+
+    const yesR = rect(yesBtn);
+    const forbid = inflate(yesR, MIN_SEPARACION);
+
+    // tamaño del no
+    const noR = rect(noBtn);
+    const bw = noR.w, bh = noR.h;
+
+    const minX = SCREEN_MARGIN;
+    const minY = SCREEN_MARGIN;
+    const maxX = window.innerWidth  - SCREEN_MARGIN - bw;
+    const maxY = window.innerHeight - SCREEN_MARGIN - bh;
+
+    for (let i=0;i<140;i++){
+      const nx = rand(minX, maxX);
+      const ny = rand(minY, maxY);
+      const candidate = {x1:nx, y1:ny, x2:nx+bw, y2:ny+bh};
+
+      if (intersects(candidate, forbid)) continue;
+
+      noBtn.style.left = nx + "px";
+      noBtn.style.top  = ny + "px";
+      noBtn.style.transform = "none"; // ya lo posicionamos directo
+      if (Math.random() < 0.55) spawnHeart();
+      return;
+    }
+  }
+
+  function onMouseMove(e){
+    if (!mainScreen.classList.contains("active")) return;
+    const r = rect(noBtn);
+    const cx = (r.x1 + r.x2)/2;
+    const cy = (r.y1 + r.y2)/2;
+    const d = Math.hypot(e.clientX - cx, e.clientY - cy);
+    if (d < 120) moveNo(); // sensibilidad
+  }
+
+  window.addEventListener("mousemove", onMouseMove);
+  window.addEventListener("resize", () => {
+    // si se redimensiona, lo recolocamos para evitar quedar fuera
+    moveNo();
+  });
+
+  // ---------------- helpers ----------------
+  function rand(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function randFloat(min, max){ return Math.random()*(max-min)+min; }
 </script>
-
 </body>
 </html>
